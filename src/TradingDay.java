@@ -21,22 +21,24 @@ public class TradingDay {
 	public TradingDay() {			
 
 	}
-
+		
 	public void BuyShare() {	
 		
-		double minPrice = 10; ///min price value for each share		
 		//buying shares
 		//first: pick up random investor from the arraylist
-		//add Random method and apply it to and int that will define the index of the array, according to its size	
+		//add Random method and apply it to and it that will define the index of the array, according to its size	
+		
+		double minPrice = 10; ///min price value for each share			
 		Random r = new Random();		
 		int randomIndex = r.nextInt(Investor.investors.size());
 		//System.out.println(investors.get(randomIndex));
 		
 		//second, check if the investor has enought budget to buy any share, considering its min value/price
-		if (Investor.InvestorBuilder.budget< minPrice) {
+		//getShares is not working since will request static values - static gives crazy results
+		if (Investor.investors.get(randomIndex).getBudget() < minPrice) {
 			System.out.println("Short budget!");
 			//if budget is lower than the min price, then remove from the list
-			Investor.investors.remove(randomIndex);			
+			//Investor.investors.remove(randomIndex);			
 		}
 		//otherwise, buy!!			
 		System.out.println("Show me the money!!");
@@ -44,37 +46,50 @@ public class TradingDay {
 		
 		//now, pick up a company share randomly
 		int minShares = 1; ///min amount of shares
-		//buying shares
-		//first: pick up random investor from the arraylist
-		//add Random method and apply it to and int that will define the index of the array, according to its size	
 		int randomComp= r.nextInt(Company.companies.size());
-		//System.out.println(investors.get(randomIndex));
-		
+				
 		//second, check if the investor has enought budget to buy any share, considering its min value/price
-		if (Company.shares < minShares) {
-			System.out.println("Short budget!");
+		if (Company.companies.get(randomComp).getShares() < minShares) {
+			System.out.println("No shares to sell!");
 			//if budget is lower than the min price, then remove from the list
-			Company.companies.remove(randomComp);			
+			//Company.companies.remove(randomComp);			
 		}
 		//otherwise, buy!!			
 		System.out.println("Show me the money!!");
 		System.out.println(Company.companies.get(randomComp));
-		
+
 		//from here make the selling process
-		//Investor: subtract from budget the price of share, add 1 share bought		
-		double budget = Investor.InvestorBuilder.budget - Company.price;
-		int shareBought = Investor.InvestorBuilder.sharesBought + 1;
-		Investor.investors.set(randomIndex, budget);	
-		Investor.investors.set(randomIndex, shareBought);	
-		
 		//Company: subtract 1 share, add 1 share sold, add the value of the price to capital
-		int shares = Company.shares - 1;
-		int sharesSold = Company.sharesSold + 1;
-		double profit = Company.sharesSold * Company.price;
-		Company.companies.set(randomComp, shares);
-		Company.companies.set(randomComp, sharesSold);
-		Company.companies.set(randomComp, profit);//arraylist.set(index,value);
-		//update the lists
+
+		int shares = Company.companies.get(randomComp).getShares() - 1;
+		int sharesSold = Company.companies.get(randomComp).getSharesSold() + 1;
+		double capital = sharesSold * Company.companies.get(randomComp).getPrice();		
+		
+		//update list
+		//Company.companies.set(randomComp, shares); //error!
+		Company.companies.get(randomComp).setShares(shares);
+		Company.companies.get(randomComp).setSharesSold(sharesSold);
+		Company.companies.get(randomComp).setCapital(capital);
+
+		//Investor: subtract from budget the price of share, add 1 share bought			
+		int sharesBought = Investor.investors.get(randomIndex).getSharesBought() + 1;
+		double budget =  Investor.investors.get(randomIndex).getBudget() - Company.companies.get(randomComp).getPrice(); //not working
+		
+		//ERROR
+		//when apply static to the variables, the results are crazy - they shouldnt be static
+		//how get the values of the variables without apply static to them? - getting the values according to the index!!
+		//class.arraylist.get(index).getMethod(); ////class.arraylist.get(index).settMethod();
+				
+		//to update list
+		//Investor.investors.set(randomIndex, budget);	
+		Investor.investors.get(randomIndex).setBudget(budget);
+		Investor.investors.get(randomIndex).setSharesBought(sharesBought);	
+		
+		//printing lists	
+		System.out.println();
+		System.out.println("Investor and Company updated");
+		System.out.println(Investor.investors.get(randomIndex));
+		System.out.println(Company.companies.get(randomComp));	
 	}
 
 	public void doubleUpPrice() {

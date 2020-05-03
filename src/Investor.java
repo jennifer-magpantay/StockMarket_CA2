@@ -29,8 +29,17 @@ public class Investor implements Comparable<Investor>{
 		return budget;
 	}
 	
-	public double getSharesBought() {
+	public int getSharesBought() {
 		return sharesBought;
+	}
+	
+	//setters
+	public void setBudget(double budget) {
+		this.budget = budget;
+	}
+
+	public void setSharesBought(int sharesBought) {
+		this.sharesBought = sharesBought;
 	}
 
 	//add a private constructor and implement in it the builder inner class
@@ -44,8 +53,8 @@ public class Investor implements Comparable<Investor>{
 	public static class InvestorBuilder{
 		//add same variables
 		private int id;
-		static double budget;	
-		static int sharesBought;
+		private double budget;	
+		private int sharesBought;
 
 		public InvestorBuilder() {
 				
@@ -61,9 +70,8 @@ public class Investor implements Comparable<Investor>{
 		//add the build method to return a instance of a new object of the vclass 
 		public Investor build() {
 			return new Investor (this);
-		}	
-		
-		//add create()?
+		}
+				
 	}	
 	
 	//error on create()
@@ -79,8 +87,8 @@ public class Investor implements Comparable<Investor>{
 		//to build new object, consider the random values
 		int minId= 1;
 		int maxId = 500;
-		double maxBud = 1000;
-		double minBud = 10000;
+		double maxBud = 10000;
+		double minBud = 1000;
 
 		for (int i = 0;  i < 100; i++) {
 			id = (int)(Math.random() * (maxId - minId) + minId);
@@ -96,31 +104,7 @@ public class Investor implements Comparable<Investor>{
 		System.out.println(investors);
 		System.out.println();
 		return investors;
-	
-		//unable to add sort() and reverse() - request local variable of arraylist e returns null		
-	}
-
-	public ArrayList<Investor> buy() {
-		double minPrice = 10; ///min price value for each share
-		
-		//buying shares
-		//first: pick up random investor from the arraylist
-		//add Random method and apply it to and int that will define the index of the array, according to its size	
-		Random r = new Random();		
-		int randomIndex = r.nextInt(investors.size());
-		//System.out.println(investors.get(randomIndex));
-		
-		//second, check if the investor has enought budget to buy any share, considering its min value/price
-		if (budget < minPrice) {
-			System.out.println("Short budget!");
-			//if budget is lower than the min price, then remove from the list
-			investors.remove(randomIndex);			
-		}
-		//otherwise, buy!!			
-		System.out.println("Show me the money!!");
-		System.out.println(investors.get(randomIndex));
-		return investors;		
-	}
+	}	
 
 	@Override
 	public String toString() {
@@ -136,4 +120,6 @@ public class Investor implements Comparable<Investor>{
 		} 
 		return 0;		
 	}
+
+	
 }

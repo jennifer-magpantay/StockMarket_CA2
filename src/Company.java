@@ -12,15 +12,15 @@ import java.util.Random;
 
 public class Company implements Comparable<Company>{
 	//add private variables	
-	static int id;
-	static int shares;
-	static double price;
-	static double profit;
-	static int sharesSold;
-	boolean soldAtLeastOne;		
-	static ArrayList<Company> companies; 
+	private int id; 
+	private int shares;
+	private double price;
+	private double capital;
+	private int sharesSold;
 
-	//getters
+	static ArrayList<Company> companies = new ArrayList<Company>(); 
+
+	//getters	
 	public int getId() {
 		return id;
 	}
@@ -32,18 +32,15 @@ public class Company implements Comparable<Company>{
 	public double getPrice() {
 		return price;
 	}
-	public double getProfit() {
-		return profit;
+
+	public double getCapital() {
+		return capital;
 	}
 
 	public int getSharesSold() {
 		return sharesSold;
 	}
-
-	public boolean isSoldAtLeastOne() {
-		return soldAtLeastOne;
-	}
-
+	
 	//setters
 	public void setId(int id) {
 		this.id = id;
@@ -57,20 +54,53 @@ public class Company implements Comparable<Company>{
 		this.price = price;
 	}
 
-	public Company() {			
+	public void setCapital(double capital) {
+		this.capital = capital;
+	}
+
+	public void setSharesSold(int sharesSold) {
+		this.sharesSold = sharesSold;
+	}
+	
+	//add a private constructor and implement in it the builder inner class
+	private Company(CompanyBuilder builder) {
+		this.id = builder.id;
+		this.shares = builder.shares;
+		this.price = builder.price;	
+		this.capital = builder.capital;
+		this.sharesSold = builder.sharesSold;
+
+	}
+	
+	//add the builder class
+	public static class CompanyBuilder{
+		private int id; 
+		private int shares;
+		private double price;
+		private double capital;
+		private int sharesSold;		
+	
+	public CompanyBuilder() {			
 
 	}
 
 	//add a private constructor and implement in it the builder inner class
-	public Company (int id, int shares, double price, int sharesSold, double profit) {
+	public CompanyBuilder(int id, int shares, double price, int sharesSold, double capital) {
 		this.id = id;
 		this.shares = shares;
 		this.price = price;	
-		this.profit = profit;
-		this.sharesSold = sharesSold;
-		this.soldAtLeastOne = soldAtLeastOne;
+		this.capital = capital;
+		this.sharesSold = sharesSold;		
 	}
 
+	//add the build method to return a instance of a new object of the vclass 
+	public Company build() {
+		return new Company (this);
+	}
+	
+}
+	
+	//add create method 			
 	public ArrayList<Company> create() {
 
 		Company comp;
@@ -94,8 +124,8 @@ public class Company implements Comparable<Company>{
 			shares = (int)(Math.random() * (maxSh - minSh) + minSh);
 			price = (double)(Math.random() * (maxPr - minPr) + minPr);
 			sharesSold = 0;
-			profit = 0;
-			comp = new Company(id, shares, price, sharesSold, profit); //declaring the new object
+			capital = 0;
+			comp = new Company.CompanyBuilder(id, shares, price, sharesSold, capital).build(); //declaring the new object
 			companies.add(comp); //saving into the array
 			//System.out.println(toString()); //printing each element created - testing output				
 		}		
@@ -108,64 +138,14 @@ public class Company implements Comparable<Company>{
 		return companies;
 	}
 	
-	public ArrayList<Company> selling() {
-		int minShares = 1; ///min amount of shares
-		//buying shares
-		//first: pick up random investor from the arraylist
-		//add Random method and apply it to and int that will define the index of the array, according to its size	
-		Random r = new Random();		
-		int randomIndex = r.nextInt(companies.size());
-		//System.out.println(investors.get(randomIndex));
-		
-		//second, check if the investor has enought budget to buy any share, considering its min value/price
-		if (shares < minShares) {
-			System.out.println("Short budget!");
-			//if budget is lower than the min price, then remove from the list
-			companies.remove(randomIndex);			
-		}
-		//otherwise, buy!!			
-		System.out.println("Show me the money!!");
-		System.out.println(companies.get(randomIndex));
-		return companies;		
-	}
-
-	public void capital() {
-		//calculating the Capital of a company (profit)
-		//profit = total of sharesSold * price
-		//run the arraylist and apply the formula for each element/company
-		//sort or reverse
-	}
-		
-	//run create arraylist first!!
-	public ArrayList<Company> sort(){
-		//sorting and printing a top ten list from low to high number of shares
-		Collections.sort(companies);
-		System.out.println("Top 10 List of Companies sorted by low to high number of shares:\n");
-		//System.out.println(companies);			
-		for (int i = 0; i < 10; i++)
-			System.out.println(companies.get(i));					
-		return companies;			
-	}
-
-	public ArrayList<Company> reverse(){
-		//reversing the sorted list		
-		Collections.reverse(companies);
-		System.out.println("Reversed list of Companies. Order by high to low number of shares:\n");
-		//System.out.println(companies);
-		for (int i = 0; i < 10; i++)
-			System.out.println(companies.get(i));					
-		return companies;
-	}		
-
-	//error!! id number is not unique / there are repeated numbers when using min and max IDs/
-	//using random r.nextInt() brings negative numbers
-	//set double for 2 decimal numbers? decimalformat?
-	//APPLY BUILDER CLASS!!
-
+	//ERROR!! ID number is not unique
+	//set double for 2 decimals? ("%.2f", double) will print 2 decimals number
+	
+	
 	@Override
 	public String toString() {
-		return "Company ID:" +"\t"+ id +"\t"+ "Number of Shares:" +"\t"+ shares +"\t"+ "Price of Shares:" +"\t"+ price +
-				"\t"+ "Number of Shares Sold:" +"\t"+ sharesSold +"\t"+ "Capital:" +"\t"+ profit + "\n";
+		return "Company ID:" +"\t"+ id +"\t"+ "Number of Shares:" +"\t"+ shares +"\t"+ "Price of Shares:" +"\t"+ price  +
+				"\t"+ "Number of Shares Sold:" +"\t"+ sharesSold +"\t"+ "Capital:" +"\t"+ capital + "\n";
 	}
 
 	@Override
@@ -177,7 +157,8 @@ public class Company implements Comparable<Company>{
 		} 
 		return 0;		
 	}
-}	
+}
+
 
 
 

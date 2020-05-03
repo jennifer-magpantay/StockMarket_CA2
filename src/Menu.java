@@ -24,7 +24,7 @@ public class Menu {
 		Scanner userInput = new Scanner(System.in);		
 		String option = null; //wont allow any null value (enter)
 		
-		Company comp = new Company();
+		Company comp = new Company.CompanyBuilder().build();
 		Investor inv = new Investor.InvestorBuilder().build();
 		TradingDay tr = new TradingDay();
 		
