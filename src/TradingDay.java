@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 
 /*
@@ -17,46 +18,78 @@ public class TradingDay {
 	//importing the arrayLists
 	ArrayList<Company> myComp = Company.companies; //to print (Company.companies)
 	ArrayList<Investor> myInv = Investor.investors; //to print (Investor.investors)
+	
+	ArrayList<TradingDay> compClone = new ArrayList<TradingDay>();
+	ArrayList<TradingDay> invClone;
+	
+	
+	boolean isMinBudget;
+	boolean isMinShares;
 
 	public TradingDay() {			
 
 	}
-		
+	
+	Random r = new Random();
+	
+	public boolean isMinBudget(double minBudget) {								
+			return minBudget >= 10;	
+		}	
+	
+	public boolean isMinShares(double minShares) {								
+		return minShares >= 1;	
+	}	
+			
 	public void BuyShare() {	
 		
 		//buying shares
 		//first: pick up random investor from the arraylist
 		//add Random method and apply it to and it that will define the index of the array, according to its size	
 		
-		double minPrice = 10; ///min price value for each share			
-		Random r = new Random();		
+		double minBudget = 10; ///min price value for each share					
 		int randomIndex = r.nextInt(Investor.investors.size());
-		//System.out.println(investors.get(randomIndex));
-		
-		//second, check if the investor has enought budget to buy any share, considering its min value/price
-		//getShares is not working since will request static values - static gives crazy results
-		if (Investor.investors.get(randomIndex).getBudget() < minPrice) {
-			System.out.println("Short budget!");
-			//if budget is lower than the min price, then remove from the list
-			//Investor.investors.remove(randomIndex);			
-		}
-		//otherwise, buy!!			
-		System.out.println("Show me the money!!");
-		System.out.println(Investor.investors.get(randomIndex));
-		
-		//now, pick up a company share randomly
+				
 		int minShares = 1; ///min amount of shares
 		int randomComp= r.nextInt(Company.companies.size());
 				
+		
+		do {
+			
 		//second, check if the investor has enought budget to buy any share, considering its min value/price
-		if (Company.companies.get(randomComp).getShares() < minShares) {
-			System.out.println("No shares to sell!");
-			//if budget is lower than the min price, then remove from the list
-			//Company.companies.remove(randomComp);			
-		}
-		//otherwise, buy!!			
-		System.out.println("Show me the money!!");
-		System.out.println(Company.companies.get(randomComp));
+		//getShares is not working since will request static values - static gives crazy results //FIXED!!
+		
+		try {		
+			isMinBudget = false;
+			do {					
+				if (Investor.investors.get(randomIndex).getBudget() >= minBudget) { 
+					isMinBudget = true;	
+							
+					System.out.println("I want shares!");
+					System.out.println(Investor.investors.get(randomIndex));
+				}
+			} while (isMinBudget == false);			
+		} catch (Exception e) {System.out.println("Short Budget");}
+		
+		//if the budget is lower than the min price of a share (10), then copy to a new list and call the next obj of the arraylist
+		//Investor.investors.remove(randomIndex);
+		//invClone.add(Investor.investors.get(randomIndex)); //ERROR ADD! 
+		//OBS: the updated are recorded on myInv arraylist = use this one for the reports?		
+		
+		//now, pick up a company share randomly		
+		//second, check if the investor has enought budget to buy any share, considering its min value/price
+		try {	
+			isMinBudget = false;
+			do {				
+				if (Company.companies.get(randomComp).getShares() >= minShares) { 
+					isMinShares = true;		
+							
+					System.out.println("Show me the money!!");
+					System.out.println(Company.companies.get(randomComp));
+				}
+			} while (isMinShares == false);
+			//if the number of shares is lower than the min number (1), then remove from the list???
+			//Company.companies.remove(randomComp);
+		} catch (Exception e) {System.out.println("No shares to sell! Next");}		
 
 		//from here make the selling process
 		//Company: subtract 1 share, add 1 share sold, add the value of the price to capital
@@ -85,11 +118,23 @@ public class TradingDay {
 		Investor.investors.get(randomIndex).setBudget(budget);
 		Investor.investors.get(randomIndex).setSharesBought(sharesBought);	
 		
+		//} while (isMinBudget|| isMinShares);
+
 		//printing lists	
 		System.out.println();
 		System.out.println("Investor and Company updated");
 		System.out.println(Investor.investors.get(randomIndex));
 		System.out.println(Company.companies.get(randomComp));	
+		
+		} while (isMinBudget|| isMinShares);
+		
+		//arraylist updated
+		System.out.println(myInv);
+		System.out.println(myComp);
+				
+		//now that it is working as expected, how do it, over and over again till budget = 0 or shares = 0?
+		//if instead remove a company that gets 0 share or 0 budget, I copy them to another arraylist? then, use this arraylist to generate my reports?
+		
 	}
 
 	public void doubleUpPrice() {

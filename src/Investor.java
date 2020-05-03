@@ -120,6 +120,5 @@ public class Investor implements Comparable<Investor>{
 		} 
 		return 0;		
 	}
-
 	
 }

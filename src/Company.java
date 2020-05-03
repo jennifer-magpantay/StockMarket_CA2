@@ -141,6 +141,27 @@ public class Company implements Comparable<Company>{
 	//ERROR!! ID number is not unique
 	//set double for 2 decimals? ("%.2f", double) will print 2 decimals number
 	
+	//run create arraylist first!!
+		public ArrayList<Company> sort(){
+			//sorting and printing a top ten list from low to high number of shares
+			Collections.sort(companies);
+			System.out.println("Top 10 List of Companies sorted by low to high number of shares:\n");
+			//System.out.println(companies);			
+			for (int i = 0; i < 10; i++)
+				System.out.println(companies.get(i));					
+			return companies;			
+		}
+
+		public ArrayList<Company> reverse(){
+			//reversing the sorted list		
+			Collections.reverse(companies);
+			System.out.println("Reversed list of Companies. Order by high to low number of shares:\n");
+			//System.out.println(companies);
+			for (int i = 0; i < 10; i++)
+				System.out.println(companies.get(i));					
+			return companies;
+		}	
+	
 	
 	@Override
 	public String toString() {
