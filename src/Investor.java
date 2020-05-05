@@ -18,7 +18,8 @@ public class Investor implements Comparable<Investor>{
 	private double budget;
 	private int sharesBought;
 
-	static ArrayList<Investor> investors = new ArrayList<Investor>();	
+	static ArrayList<Investor> investors = new ArrayList<Investor>();
+	static ArrayList<Investor> investorsCopy = new ArrayList<Investor>();
 
 	//getters
 	public int getId() {
@@ -116,22 +117,33 @@ public class Investor implements Comparable<Investor>{
 	}	
 
 	public ArrayList<Investor> sort(){
-		//sorting and printing a top 20list from low to high number of shares
 		Collections.sort(Investor.investors);
-		System.out.println("Top 10 List of Companies sorted by low to high number of shares:\n");
-		//System.out.println(companies);			
-		for (int i = 0; i < 20; i++)
-			System.out.println(Investor.investors.get(i));					
-		return Investor.investors;			
+		System.out.println(Investor.investors);	
+		System.out.println();
+		//sorting and printing a top list from low to high number of shares
+		//System.out.println("Top 10 list of Investors sorted by low to high number of shares bought:\n");
+		//System.out.println(Investor.investors);
+		//for (int i = 0; i < 10; i++)
+		//System.out.println(Investor.investors.get(i));
+
+		//or just print according to the size of the array		
+		//printing copy list with all deleted investors
+		Collections.sort(Investor.investorsCopy);			
+		System.out.println(Investor.investorsCopy);
+
+		return Investor.investorsCopy;		
 	}
+
+
 
 	public ArrayList<Investor> reverse(){
 		//reversing the sorted list		
 		Collections.reverse(Investor.investors);
-		System.out.println("Reversed list of Companies. Order by high to low number of shares:\n");
-		//System.out.println(companies);
-		for (int i = 0; i < 20; i++)
-			System.out.println(Investor.investors.get(i));					
+		System.out.println(Investor.investors);	
+
+		System.out.println();		
+		Collections.reverse(Investor.investorsCopy);			
+		System.out.println(Investor.investorsCopy);
 		return Investor.investors;
 	}	
 
@@ -148,6 +160,6 @@ public class Investor implements Comparable<Investor>{
 			return 1; 
 		} 
 		return 0;		
-	}
+	}	
 
 }

@@ -19,8 +19,10 @@ public class Company implements Comparable<Company>{
 	private double capital;
 	private int sharesSold;
 
-	static ArrayList<Company> companies = new ArrayList<Company>(); 
-	
+	static ArrayList<Company> companies = new ArrayList<Company>();
+	static ArrayList<Company> companiesCopy = new ArrayList<Company>(); 
+
+
 	//getters	
 	public int getId() {
 		return id;
@@ -41,7 +43,7 @@ public class Company implements Comparable<Company>{
 	public int getSharesSold() {
 		return sharesSold;
 	}
-	
+
 	//setters
 	public void setId(int id) {
 		this.id = id;
@@ -62,7 +64,7 @@ public class Company implements Comparable<Company>{
 	public void setSharesSold(int sharesSold) {
 		this.sharesSold = sharesSold;
 	}
-	
+
 	//add a private constructor and implement in it the builder inner class
 	private Company(CompanyBuilder builder) {
 		this.id = builder.id;
@@ -72,7 +74,7 @@ public class Company implements Comparable<Company>{
 		this.sharesSold = builder.sharesSold;
 
 	}
-	
+
 	//add the builder class
 	public static class CompanyBuilder{
 		private int id; 
@@ -80,27 +82,27 @@ public class Company implements Comparable<Company>{
 		private double price;
 		private double capital;
 		private int sharesSold;		
-	
-	public CompanyBuilder() {			
+
+		public CompanyBuilder() {			
+
+		}
+
+		//add a private constructor and implement in it the builder inner class
+		public CompanyBuilder(int id, int shares, double price, int sharesSold, double capital) {
+			this.id = id;
+			this.shares = shares;
+			this.price = price;	
+			this.capital = capital;
+			this.sharesSold = sharesSold;		
+		}
+
+		//add the build method to return a instance of a new object of the vclass 
+		public Company build() {
+			return new Company (this);
+		}
 
 	}
 
-	//add a private constructor and implement in it the builder inner class
-	public CompanyBuilder(int id, int shares, double price, int sharesSold, double capital) {
-		this.id = id;
-		this.shares = shares;
-		this.price = price;	
-		this.capital = capital;
-		this.sharesSold = sharesSold;		
-	}
-
-	//add the build method to return a instance of a new object of the vclass 
-	public Company build() {
-		return new Company (this);
-	}
-	
-}
-	
 	//add create method 			
 	public ArrayList<Company> create() {
 
@@ -117,7 +119,7 @@ public class Company implements Comparable<Company>{
 		int minSh = 500;
 		double maxPr = 100;
 		double minPr = 10;	
-		
+
 
 		//for loop to generate the random values for according to the size of the array? 
 		//or a for loop < 100? //generates 100 elements
@@ -132,13 +134,13 @@ public class Company implements Comparable<Company>{
 			companies.add(comp); //saving into the array
 			//System.out.println(toString()); //printing each element created - testing output			
 		}
-		
+
 		//for loop according to the size to calculate the amount of shares registered
 		int total = 0;				
 		for (int i = 0; i < companies.size(); i++ ) {					
 			total += companies.get(i).getShares();				
 		}	
-		
+
 		System.out.println(companies);
 		System.out.println();
 
@@ -148,32 +150,41 @@ public class Company implements Comparable<Company>{
 		//System.out.println(toString()); //prints the last company
 		return companies;
 	}
-	
+
 	//ERROR!! ID number is not unique
 	//set double for 2 decimals? ("%.2f", double) will print 2 decimals number
-	
-	//run create arraylist first!!
-		public ArrayList<Company> sort(){
-			//sorting and printing a top 20 list from low to high number of shares
-			Collections.sort(Company.companies);
-			System.out.println("Top 10 List of Companies sorted by low to high number of shares:\n");
-			//System.out.println(companies);			
-			for (int i = 0; i < 20; i++)
-				System.out.println(Company.companies.get(i));					
-			return Company.companies;			
-		}
 
-		public ArrayList<Company> reverse(){
-			//reversing the sorted list		
-			Collections.reverse(Company.companies);
-			System.out.println("Reversed list of Companies. Order by high to low number of shares:\n");
-			//System.out.println(companies);
-			for (int i = 0; i < 20; i++)
-				System.out.println(Company.companies.get(i));					
-			return Company.companies;
-		}	
-	
-	
+	//run create arraylist first!!
+	public ArrayList<Company> sort(){
+		Collections.sort(Company.companies);
+		System.out.println(Company.companies);
+		System.out.println();
+
+		//sorting and printing a top list from low to high number of shares			
+		//System.out.println("Top 10 list of Investors sorted by low to high number of shares bought:\n");
+		//System.out.println(Investor.investors);
+		//for (int i = 0; i < 10; i++)
+		//System.out.println(Investor.investors.get(i));
+
+		//printing copy list
+		Collections.sort(Company.companiesCopy);
+		System.out.println(Company.companiesCopy);			
+
+		return Company.companiesCopy;			
+	}
+
+	public ArrayList<Company> reverse(){
+		//reversing the sorted list		
+		Collections.reverse(Company.companies);
+		System.out.println(Company.companies);
+		System.out.println();
+
+		//printing copy list
+		Collections.sort(Company.companiesCopy);
+		System.out.println(Company.companiesCopy);					
+		return Company.companiesCopy;
+	}		
+
 	@Override
 	public String toString() {
 		return "Company ID:" +"\t"+ id +"\t"+ "Number of Shares:" +"\t"+ shares +"\t"+ "Price of Shares:" +"\t"+ price  +

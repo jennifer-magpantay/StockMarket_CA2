@@ -9,8 +9,7 @@ public class Main {
 		
 		//Company comp = new Company();
 		//Investor inv = new Investor.InvestorBuilder().build();
-		//TradingDay day = new TradingDay();
-				
+		//TradingDay day = new TradingDay();				
 	}	
 
 }

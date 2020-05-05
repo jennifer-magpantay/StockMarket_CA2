@@ -17,80 +17,121 @@ import java.util.Random;
 public class TradingDay {
 
 	//importing the arrayLists
-	ArrayList<Company> myComp = Company.companies; //to print (Company.companies)
-	ArrayList<Investor> myInv = Investor.investors; //to print (Investor.investors)
-	
-	ArrayList<TradingDay> compClone = new ArrayList<TradingDay>();
-	ArrayList<TradingDay> invClone = new ArrayList<TradingDay>();	
-	
+	ArrayList<Company> companytr = Company.companies; //to print (Company.companies)
+	ArrayList<Company> companyCopytr = Company.companiesCopy; //to print (Company.companies)
+	ArrayList<Investor> investortr = Investor.investors; //to print (Investor.investors)
+	ArrayList<Investor> investorCopytr = Investor.investorsCopy; //to print (Investor.investors)
+
+
+	//clone
+	//ArrayList<TradingDay> compClone = (ArrayList<TradingDay>) Company.companies.clone();
+	//ArrayList<TradingDay> invClone = (ArrayList<TradingDay>) Investor.investors.clone();
+
+	Menu myMenu = new Menu();
+
 	boolean isMinBudget;
 	boolean isMinShares;
 
 	public TradingDay() {			
 
 	}
-	
+
 	Random r = new Random();
-			
+
 	//method that will simulate the stock market			
 	public void buyShare() {	
-		
+
 		//buying shares
 		//first: pick up random investor from the arraylist
 		//add Random method and apply it to and it that will define the index of the array, according to its size	
-		
+
 		double minBudget = 10; ///min price value for each share					
-		int randomIndex = 0; // = r.nextInt(Investor.investors.size()); //leaving outside will active the random just once, when the method is executed
-				
+		int randomIndex = 0; //r.nextInt(Investor.investors.size()); //leaving outside will active the random just once, when the method is executed
+
 		int minShares = 1; ///min amount of shares
 		int randomComp = 0; // = r.nextInt(Company.companies.size());	
-		
-			
+
+
 		//second, check if the investor has enought budget to buy any share, considering its min value/price
 		//getShares is not working since will request static values - static gives crazy results //FIXED!!
-				
-		try {	
-			randomIndex = r.nextInt(Investor.investors.size()); 
+
+		//while(condition){ } //while the condition is true keep going
+		//do { } while (condition == false); //while the condition is false, do it again
+
+		try {
 			isMinBudget = false;
-			do {		
-				if (Investor.investors.get(randomIndex).getBudget() >= minBudget) { 
-					isMinBudget = true;	
-							
-					//System.out.println("I want shares!");
-					//System.out.println(Investor.investors.get(randomIndex));
+
+			do {	
+				//pick up randomly a investor
+				randomIndex = r.nextInt(Investor.investors.size());	
+				System.out.println(Investor.investors.get(randomIndex));
+
+				if (Investor.investors.get(randomIndex).getBudget() >= minBudget) {
+					System.out.println("I have enough budget! I want shares!");
+					System.out.println(Investor.investors.get(randomIndex));
+					isMinBudget = true;
+				}				
+				//adding the condition inside while()		
+				//if condition is different (budget >= minBudget), then move on
+				//otherwise, if condition is the same, then do pick up another investor
+
+				//if the budget is lower than the min price of a share (10), then 
+				//remove?? 
+				if (Investor.investors.get(randomIndex).getBudget() <= minBudget) {
+					isMinBudget = false;
+					System.out.println("Removing: " + Investor.investors.get(randomIndex));
+					investorCopytr.add(Investor.investors.get(randomIndex));
+					Investor.investors.remove(randomIndex); 
+					//once is removed, it wont be available for the reports!					
 				}
-			} while (isMinBudget == false);			
-		} catch (Exception e) {System.out.println("Short Budget! NEXT");}
-		
-		//if the budget is lower than the min price of a share (10), then copy to a new list and call the next obj of the arraylist
-		//Investor.investors.remove(randomIndex); ???
-		//invClone.add(Investor.investors.get(randomIndex)); //ERROR ADD! 
-		//OBS: the updated are recorded on myInv arraylist = use this one for the reports?		
-		
+				//Investor.investors.remove(randomIndex); 
+				//add the investor to a new array list								
+			} while (isMinBudget == false);
+
+		} catch(Exception e) {
+			System.out.println("No more investors available. End of the simulation\n");
+			//should finish and go back to menu for the reports
+			//System.exit(0);
+			myMenu.start();
+		};
+
 		//now, pick up a company share randomly		
 		//second, check if the investor has enought budget to buy any share, considering its min value/price
-		try {	
-			randomComp = r.nextInt(Company.companies.size());	
-			isMinBudget = false;
-			do {			
-				if (Company.companies.get(randomComp).getShares() >= minShares) { 
-					isMinShares = true;		
-							
-					//System.out.println("Show me the money!!");
-					//System.out.println(Company.companies.get(randomComp));
+		try {
+			isMinShares = false;
+
+			do {
+				randomComp = r.nextInt(Company.companies.size());
+				System.out.println(Company.companies.get(randomComp));
+				
+				if (Investor.investors.get(randomIndex).getBudget() > Company.companies.get(randomComp).getPrice()) {
+					System.out.println("I have shares! Show me the money!!");
+					System.out.println(Company.companies.get(randomComp));
+					isMinShares = true;	
+				}	
+
+				if (Company.companies.get(randomComp).getShares() < minShares) {
+					isMinShares = false;
+					System.out.println("Removing: " + Company.companies.get(randomComp));
+					companyCopytr.add(Company.companies.get(randomIndex));
+					Company.companies.remove(randomComp); 					
 				}
-			} while (isMinShares == false);
-			//if the number of shares is lower than the min number (1), then remove from the list???
-			//Company.companies.remove(randomComp);
-		} catch (Exception e) {System.out.println("No shares to sell! Next");}	
-		
+
+			} while (isMinShares == false);	
+
+		} catch(Exception e) {
+			System.out.println("No more shares available. End of the simulation\n");
+			//should finish and go back to menu for the reports
+			//System.exit(0);
+			myMenu.start();
+		};
 
 		//from here make the selling process
 		//Company: subtract 1 share, add 1 share sold, add the value of the price to capital
 		int shares = Company.companies.get(randomComp).getShares() - 1;
 		int sharesSold = Company.companies.get(randomComp).getSharesSold() + 1;
 		double capital = sharesSold * Company.companies.get(randomComp).getPrice();		
-		
+
 		//update list
 		//Company.companies.set(randomComp, shares); //error!
 		Company.companies.get(randomComp).setShares(shares);
@@ -100,41 +141,38 @@ public class TradingDay {
 		//Investor: subtract from budget the price of share, add 1 share bought			
 		int sharesBought = Investor.investors.get(randomIndex).getSharesBought() + 1;
 		double budget =  Investor.investors.get(randomIndex).getBudget() - Company.companies.get(randomComp).getPrice(); //not working
-		
+
 		//to update list
 		Investor.investors.get(randomIndex).setBudget(budget);
-		Investor.investors.get(randomIndex).setSharesBought(sharesBought);	
-		
-		//printing lists	
+		Investor.investors.get(randomIndex).setSharesBought(sharesBought);				
+
+		//printing lists: testing
 		//System.out.println();
-		//System.out.println("Investor and Company updated");
-		//System.out.println(Investor.investors.get(randomIndex));
-		//System.out.println(Company.companies.get(randomComp));	
-						
-		//now that it is working as expected, how do it, over and over again till budget = 0 or shares = 0?
-		//with the updated list, print sort and reverse for reports! comparable applied to each class (comp and inv)
-		//do while applied: ERROR!! - it is using the same inv and company till the end!
-	}
+		System.out.println("Investor and Company updated");
+		System.out.println(Investor.investors.get(randomIndex));
+		System.out.println(Company.companies.get(randomComp));	
 	
+	}
+
+
 	public void simulation() {
-		
-		for (int i = 0;  i < 2000; i++) {			
+
+		//this method will run the buyShare() 20000 times, till the program stop because of the required conditions
+		//10000 times was not enough to get no investors or no shares to sold
+		for (int i = 0;  i < 20000; i++) {			
 			buyShare();					
-		}		
-		System.out.println("Simulation finished\n");
-		//making up to 2000 loops with no error		
-		//set to (100*100) 10000 loops: BUG
+		}	
+
+		//do-while ERROR: running 2 by 2???
+		//do{ buyShare(); } while (isMinBudget == false  || isMinShares == false); 
+
+		System.out.println("Simulation finished\n");	
+		
+		//the method works! reports as well! BUT...
+		//investors are finishing with negative budget values
+		//change the condition/statement for companies? if the budget is > price //YEP, WORKS!
 	}
-	
-	//do-while loop
-	/*
-	 * do{
-	 * 
-	 * } while (isMinBuget == false  || isMinShares == false); 
-	 */
-	//ERROR! BUG
-	
-	
+
 	public void doubleUpPrice() {
 		//when a company achieve 10 sales, then double up
 		//get Company Arraylist
