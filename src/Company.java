@@ -8,6 +8,7 @@ import java.util.Random;
  * A random number of shares (between 500 and 1000)
  * A random share price (between 10 and 100)
  * Any other attribute that you consider relevant to the context 
+ * Builder Pattern Applied
  */
 
 public class Company implements Comparable<Company>{
@@ -19,7 +20,7 @@ public class Company implements Comparable<Company>{
 	private int sharesSold;
 
 	static ArrayList<Company> companies = new ArrayList<Company>(); 
-
+	
 	//getters	
 	public int getId() {
 		return id;
@@ -115,7 +116,8 @@ public class Company implements Comparable<Company>{
 		int maxSh = 1000;
 		int minSh = 500;
 		double maxPr = 100;
-		double minPr = 10;		
+		double minPr = 10;	
+		
 
 		//for loop to generate the random values for according to the size of the array? 
 		//or a for loop < 100? //generates 100 elements
@@ -125,14 +127,23 @@ public class Company implements Comparable<Company>{
 			price = (double)(Math.random() * (maxPr - minPr) + minPr);
 			sharesSold = 0;
 			capital = 0;
+			//totalShares = totalShares + shares.get(i);
 			comp = new Company.CompanyBuilder(id, shares, price, sharesSold, capital).build(); //declaring the new object
 			companies.add(comp); //saving into the array
-			//System.out.println(toString()); //printing each element created - testing output				
-		}		
+			//System.out.println(toString()); //printing each element created - testing output			
+		}
+		
+		//for loop according to the size to calculate the amount of shares registered
+		int total = 0;				
+		for (int i = 0; i < companies.size(); i++ ) {					
+			total += companies.get(i).getShares();				
+		}	
+		
+		System.out.println(companies);
+		System.out.println();
 
 		System.out.println("Number of Companies registered: " + companies.size());//printing the size of the array - testing 
-		System.out.println();
-		System.out.println(companies);
+		System.out.println("Total of shares registered to sell: " + total);	
 		System.out.println();
 		//System.out.println(toString()); //prints the last company
 		return companies;
@@ -143,23 +154,23 @@ public class Company implements Comparable<Company>{
 	
 	//run create arraylist first!!
 		public ArrayList<Company> sort(){
-			//sorting and printing a top ten list from low to high number of shares
-			Collections.sort(companies);
+			//sorting and printing a top 20 list from low to high number of shares
+			Collections.sort(Company.companies);
 			System.out.println("Top 10 List of Companies sorted by low to high number of shares:\n");
 			//System.out.println(companies);			
-			for (int i = 0; i < 10; i++)
-				System.out.println(companies.get(i));					
-			return companies;			
+			for (int i = 0; i < 20; i++)
+				System.out.println(Company.companies.get(i));					
+			return Company.companies;			
 		}
 
 		public ArrayList<Company> reverse(){
 			//reversing the sorted list		
-			Collections.reverse(companies);
+			Collections.reverse(Company.companies);
 			System.out.println("Reversed list of Companies. Order by high to low number of shares:\n");
 			//System.out.println(companies);
-			for (int i = 0; i < 10; i++)
-				System.out.println(companies.get(i));					
-			return companies;
+			for (int i = 0; i < 20; i++)
+				System.out.println(Company.companies.get(i));					
+			return Company.companies;
 		}	
 	
 	
@@ -170,10 +181,10 @@ public class Company implements Comparable<Company>{
 	}
 
 	@Override
-	public int compareTo(Company objlow) {	//from low-high
-		if (this.shares < objlow.shares) { 	//(this.shares > objhigh.shares) { //returns high-low
+	public int compareTo(Company obj) {	//from low-high
+		if (this.capital > obj.capital) { 	//(this.shares > objhigh.shares) { //returns high-low
 			return -1; 
-		} if (this.shares > objlow.shares) { //if (this.shares < objhigh.shares) //returns high-low
+		} if (this.capital < obj.capital) { //if (this.shares < objhigh.shares) //returns high-low
 			return 1; 
 		} 
 		return 0;		

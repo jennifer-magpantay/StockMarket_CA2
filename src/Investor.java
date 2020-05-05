@@ -17,7 +17,7 @@ public class Investor implements Comparable<Investor>{
 	private int id;
 	private double budget;
 	private int sharesBought;
-	
+
 	static ArrayList<Investor> investors = new ArrayList<Investor>();	
 
 	//getters
@@ -28,11 +28,11 @@ public class Investor implements Comparable<Investor>{
 	public double getBudget() {
 		return budget;
 	}
-	
+
 	public int getSharesBought() {
 		return sharesBought;
 	}
-	
+
 	//setters
 	public void setBudget(double budget) {
 		this.budget = budget;
@@ -57,7 +57,7 @@ public class Investor implements Comparable<Investor>{
 		private int sharesBought;
 
 		public InvestorBuilder() {
-				
+
 		}
 
 		//add a constructor + param
@@ -71,14 +71,14 @@ public class Investor implements Comparable<Investor>{
 		public Investor build() {
 			return new Investor (this);
 		}
-				
+
 	}	
-	
+
 	//error on create()
 	//void create method just works when is added to builder constructor	
 	//just accept if create() is created outside of the builder class
 	//once is created outside, it will request a local variable of the arraylist or a global one
-	
+
 	public ArrayList<Investor> create() {	
 
 		Investor inv;				
@@ -98,12 +98,41 @@ public class Investor implements Comparable<Investor>{
 			investors.add(inv); 
 			//System.out.println(toString()); //printing each element created - testing output				
 		}
-		
-		System.out.println("Number of Investors registered: " + investors.size()); 
+
+		//for loop according to the size to calculate the amount of shares registered
+		int total = 0;				
+		for (int i = 0; i < investors.size(); i++ ) {					
+			total += investors.get(i).getBudget();				
+		}	
+
 		System.out.println();
 		System.out.println(investors);
+		System.out.println();		
+		System.out.println("Number of Investors registered: " + investors.size()); 
+		System.out.println("Total amount of budget: " + total);	
 		System.out.println();
+
 		return investors;
+	}	
+
+	public ArrayList<Investor> sort(){
+		//sorting and printing a top 20list from low to high number of shares
+		Collections.sort(Investor.investors);
+		System.out.println("Top 10 List of Companies sorted by low to high number of shares:\n");
+		//System.out.println(companies);			
+		for (int i = 0; i < 20; i++)
+			System.out.println(Investor.investors.get(i));					
+		return Investor.investors;			
+	}
+
+	public ArrayList<Investor> reverse(){
+		//reversing the sorted list		
+		Collections.reverse(Investor.investors);
+		System.out.println("Reversed list of Companies. Order by high to low number of shares:\n");
+		//System.out.println(companies);
+		for (int i = 0; i < 20; i++)
+			System.out.println(Investor.investors.get(i));					
+		return Investor.investors;
 	}	
 
 	@Override
@@ -112,13 +141,13 @@ public class Investor implements Comparable<Investor>{
 	}
 
 	@Override
-	public int compareTo(Investor objlow) {	//from low-high
-		if (this.budget < objlow.budget) { 	//(this.shares > objhigh.shares) { //returns high-low
+	public int compareTo(Investor obj) {	//from low-high
+		if (this.sharesBought > obj.sharesBought) { 	//(this.shares > objhigh.shares) { //returns high-low
 			return -1; 
-		} if (this.budget > objlow.budget) { //if (this.shares < objhigh.shares) //returns high-low
+		} if (this.sharesBought < obj.sharesBought) { //if (this.shares < objhigh.shares) //returns high-low
 			return 1; 
 		} 
 		return 0;		
 	}
-	
+
 }

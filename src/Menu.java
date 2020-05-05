@@ -33,59 +33,59 @@ public class Menu {
 			do {			
 				System.out.println("********* MENU OPTIONS *********");
 				System.out.println();			
-				System.out.println("1. Companies with Highiest Capital");
-				System.out.println("2. Companies with Lowest Capital");
-				System.out.println("3. Investors with Highiest number of Shares");				
-				System.out.println("4. Investors with Lowest number of Shares");
-				System.out.println("5. Display Companies");
-				System.out.println("6. Display Investors");
-				System.out.println("7. Testing Reports");
+				System.out.println("1. Display Companies");
+				System.out.println("2. Display Investors");
+				System.out.println("3. Trading Day Simulation");				
+				System.out.println("4. Companies with Highiest Capital");
+				System.out.println("5. Companies with Lowest Capital");
+				System.out.println("6. Investors with Highiest number of Shares");
+				System.out.println("7. Investors with Lowest number of Shares");
 				System.out.println();
 
 				option=userInput.nextLine();
 				switch (option) {
 				case("1"):
 					System.out.println("------------------------------------------------------");
-					System.out.println("********* COMPANIES WITH HIGHIEST CAPITAL *********\n");					
-					
+					System.out.println("********* DISPLAY COMPANIES *********\n");					
+					comp.create();
 				break;
 
 				case("2"):
 					System.out.println("------------------------------------------------------");
-					System.out.println("********* COMPANIES WITH LOWEST CAPITAL *********\n");
-									
+					System.out.println("********* DISPLAY INVESTORS *********\n");
+					inv.create();		
 					break;
 
 				case("3"):
 					System.out.println("------------------------------------------------------");
-					System.out.println("********* INVESTORS WITH HIGHIEST NUMBER OF SHARES *********\n");
-
-				
+					System.out.println("********* TRADING DAY SIMULATION *********\n");
+					tr.buyShare();
+					tr.simulation();		
 				break;
 
 				case("4"):
 					System.out.println("------------------------------------------------------");
-					System.out.println("********* INVESTORS WITH LOWEST NUMBER OF SHARES *********\n");
-			
+					System.out.println("********* COMPANIES WITH HIGHIEST CAPITAL *********\n");
+					comp.sort();
 				break;
 				
 				case("5"):
 					System.out.println("------------------------------------------------------");
-					System.out.println("********* DISPLAY COMPANIES *********\n");
+					System.out.println("********* COMPANIES WITH LOWEST CAPITAL *********\n");
 					System.out.println();
-					comp.create();			
+					comp.reverse();			
 				break;
 				
 				case("6"):
 					System.out.println("------------------------------------------------------");
-					System.out.println("********* DISPLAY INVESTORS *********\n");
-					inv.create(); 
+					System.out.println("********* INVESTORS WITH HIGHIEST NUMBER OF SHARES *********\n");
+					inv.sort(); 
 				break;
 				
 				case("7"):
 					System.out.println("------------------------------------------------------");
-					System.out.println("********* TESTING REPORTS *********\n");
-					tr.BuyShare();
+					System.out.println("********* INVESTORS WITH LOWEST NUMBER OF SHARES *********\n");
+					inv.reverse();
 				break;
 
 				default:
