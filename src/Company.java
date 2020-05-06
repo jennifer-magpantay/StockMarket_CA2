@@ -170,7 +170,7 @@ public class Company implements Comparable<Company>{
 		Collections.sort(Company.companiesCopy);
 		System.out.println(Company.companiesCopy);			
 
-		return Company.companiesCopy;			
+		return Company.companies;			
 	}
 
 	public ArrayList<Company> reverse(){
@@ -182,7 +182,7 @@ public class Company implements Comparable<Company>{
 		//printing copy list
 		Collections.sort(Company.companiesCopy);
 		System.out.println(Company.companiesCopy);					
-		return Company.companiesCopy;
+		return Company.companies;
 	}		
 
 	@Override
