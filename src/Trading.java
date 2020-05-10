@@ -13,7 +13,7 @@ public class Trading {
 	
 	public void off() {
 		System.out.println("The Trading Day Simulation has finished\n");
-		//go back to main menu		
+		tr.display();
 		myMenu.start();
 		
 	}

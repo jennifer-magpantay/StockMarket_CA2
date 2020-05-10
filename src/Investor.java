@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,34 +16,38 @@ public class Investor implements Comparable<Investor>{
 
 	//add private variables	
 	private int id;
-	private double budget;
+	private float budget;
 	private int sharesBought;
-
+	
 	static ArrayList<Investor> investors = new ArrayList<Investor>();
-	static ArrayList<Investor> investorsCopy = new ArrayList<Investor>();
+	static ArrayList<Investor> investorsCopy = new ArrayList<Investor>(); 
+	
+	//formating float numbers			
+	DecimalFormat df = new DecimalFormat("#.00");	
 
 	//getters
 	public int getId() {
 		return id;
 	}
 
-	public double getBudget() {
+	public float getBudget() {
 		return budget;
 	}
 
 	public int getSharesBought() {
 		return sharesBought;
 	}
+	
 
 	//setters
-	public void setBudget(double budget) {
+	public void setBudget(float budget) {
 		this.budget = budget;
 	}
 
 	public void setSharesBought(int sharesBought) {
 		this.sharesBought = sharesBought;
 	}
-
+	
 	//add a private constructor and implement in it the builder inner class
 	private Investor(InvestorBuilder builder) {
 		this.id = builder.id;
@@ -54,15 +59,16 @@ public class Investor implements Comparable<Investor>{
 	public static class InvestorBuilder{
 		//add same variables
 		private int id;
-		private double budget;	
+		private float budget;	
 		private int sharesBought;
+		
 
 		public InvestorBuilder() {
 
 		}
 
 		//add a constructor + param
-		public InvestorBuilder(int id, double budget, int sharesBought) {
+		public InvestorBuilder(int id, float budget, int sharesBought) {
 			this.id = id;
 			this.budget = budget;
 			this.sharesBought = sharesBought;
@@ -88,18 +94,24 @@ public class Investor implements Comparable<Investor>{
 		//to build new object, consider the random values
 		int minId= 1;
 		int maxId = 500;
-		double maxBud = 10000;
-		double minBud = 1000;
+		float maxBud = 10000; //10000
+		float minBud = 1000; //1000
 
 		for (int i = 0;  i < 100; i++) {
 			id = (int)(Math.random() * (maxId - minId) + minId);
-			budget = (double)(Math.random() * (maxBud - minBud) + minBud);
+			budget = (float)(Math.random() * (maxBud - minBud) + minBud);
 			sharesBought = 0;
 			inv = new Investor.InvestorBuilder(id, budget, sharesBought).build(); //declaring the new object 
 			investors.add(inv); 
 			//System.out.println(toString()); //printing each element created - testing output				
 		}
-
+		
+		display();	
+		return investors;
+	}	
+	
+	public ArrayList<Investor> display(){
+		//display the investors and total of budget
 		//for loop according to the size to calculate the amount of shares registered
 		int total = 0;				
 		for (int i = 0; i < investors.size(); i++ ) {					
@@ -110,9 +122,9 @@ public class Investor implements Comparable<Investor>{
 		System.out.println(investors);
 		System.out.println();		
 		System.out.println("Number of Investors registered: " + investors.size()); 
-		System.out.println("Total amount of budget: " + total);	
+		System.out.println("Total amount of budget: " + (df.format(total)));	
 		System.out.println();
-
+		
 		return investors;
 	}	
 
@@ -149,7 +161,7 @@ public class Investor implements Comparable<Investor>{
 
 	@Override
 	public String toString() {
-		return "Investor ID:" +"\t"+ id +"\t"+ "Budget:" +"\t"+ budget + "\t"+ "Shares Bought: " + sharesBought + "\n";
+		return "Investor ID:" + "\t" + id + "\t" + "Budget:" + "\t" + (df.format(budget)) + "\t" + "Shares Bought:" + sharesBought + "\n";
 	}
 
 	@Override

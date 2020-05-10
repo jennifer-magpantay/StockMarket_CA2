@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,21 +18,18 @@ import java.util.Random;
  * 
  */
 public class TradingDay {
-
+		
 	//importing the arrayLists
 	ArrayList<Company> companytr = Company.companies; //to print (Company.companies)
 	ArrayList<Company> companyCopytr = Company.companiesCopy; //to print (Company.companies)
 	ArrayList<Investor> investortr = Investor.investors; //to print (Investor.investors)
 	ArrayList<Investor> investorCopytr = Investor.investorsCopy; //to print (Investor.investors)
-
-
-	//clone
-	//ArrayList<TradingDay> compClone = (ArrayList<TradingDay>) Company.companies.clone();
-	//ArrayList<TradingDay> invClone = (ArrayList<TradingDay>) Investor.investors.clone();
-
+	
 	Menu myMenu = new Menu();
-
 	boolean validation;
+	
+	//formating float numbers			
+	DecimalFormat df = new DecimalFormat("#.00");	
 
 	public TradingDay() {			
 
@@ -40,28 +38,30 @@ public class TradingDay {
 	Random r = new Random();
 
 	//method that will simulate the stock market			
-	public void buyShare() {	
-
-		double minBudget = 10; ///min price value for each share					
-		int randomIndex = 0; //r.nextInt(Investor.investors.size()); //leaving outside will active the random just once, when the method is executed
-
-		int minShares = 1; ///min amount of shares
+	public void buyShare() {
+		
+		Trading trading = new Trading();
+		TradingOffCommand off = new TradingOffCommand(trading);		
+				
+		int randomIndex = 0; //r.nextInt(Investor.investors.size()); //leaving outside will active the random just once, when the method is executed		
 		int randomComp = 0; // = r.nextInt(Company.companies.size());	
+		
+		int minShares = 1; ///min amount of shares
+		
+		int minPrice = 0; //getting the value of the min share price
+		for (int i = 0; i < Company.companies.size(); i++ ) {							
+			if(Company.companies.get(i).getPrice() < Company.companies.get(minPrice).getPrice()) {
+				minPrice = i;
+			}
+		}
 
-		//buying shares
-		//first: pick up random Company from the arraylist
-		//add Random method and apply it to and it that will define the index of the array, according to its size	
-
-
-
-		//second, check if the investor has enought budget to buy any share, considering its min value/price
-		//getShares is not working since will request static values - static gives crazy results //FIXED!!
-
-		//while(condition){ } //while the condition is true keep going
-		//do { } while (condition == false); //while the condition is false, do it again
+		//buying shares: Companies
+		//first: pick up random Company from the arraylist (Random method)
+		//second, check if the company has at least 1 share to sell
+		//third, check if the company has already 10 shares sold. if yes, double up its price	
+		//if a company has less than 1 share available, then remove if from the list
 
 		//now, pick up a company share randomly		
-		//second, check if the investor has enought budget to buy any share, considering its min value/price
 		try {
 			validation = false;
 			do {		
@@ -76,13 +76,19 @@ public class TradingDay {
 					validation = true;
 				}
 
-				//third, check if the Company has already 10 sales. If yes, double up price //working!!
-				else if  (Company.companies.get(randomComp).getSharesSold() == 10) {	
+				//third, check if the Company has already 10 sales. If yes, double up price and move on
+				if  (Company.companies.get(randomComp).getCounter() == 10) {	//==10
 					validation = true;
-					System.out.println("Double up price");
+					System.out.println("My shares are flying! I am doubling up my price");
+					
 					//set the new price
-					double price = Company.companies.get(randomComp).getPrice() * 2;
-					Company.companies.get(randomComp).setPrice(price);								
+					float price = Company.companies.get(randomComp).getPrice() * 2;
+					Company.companies.get(randomComp).setPrice(price);
+					System.out.println(Company.companies.get(randomComp));
+					
+					//setting the counter to 0 again
+					Company.companies.get(randomComp).setCounter(0);			
+					
 				}
 
 				//then, if the Company has less than 1 share (0), then remove from the list 
@@ -94,17 +100,19 @@ public class TradingDay {
 				}
 
 			} while (validation == false);	
-
+			
 		} catch(Exception e) {
-			System.out.println("No more shares available. End of the simulation\n");
-			//should finish and go back to menu for the reports
-			//System.exit(0);
-			Trading trading = new Trading();
-			TradingOffCommand off = new TradingOffCommand(trading);
+			System.out.println("\nNo more shares available. End of the simulation\n");
+			//finishing the simulation and going back to menu	
 			off.execute();
 		};
-
-		//Investors
+		
+		//buying shares: Investors
+		//first: pick up random Investor from the arraylist (Random method)
+		//second, check if the Investor has enough money to buy the share from the company. if yes, move on. if not, change company and investor
+		//if a Investor has a bugdet lower than the cheapest share, then remove it from the list
+		
+		//picking up a invstor
 		try {
 			validation = false;
 			do {					
@@ -123,7 +131,7 @@ public class TradingDay {
 
 				//if not, then pick up another investor? pick up another company? or both? //BOTH WORKS BETTER FOR LONG LOOPS
 				//obs: if not pick a new company: falls into a infinite loop looking for a investor that matchs the company price?
-				else if (Investor.investors.get(randomIndex).getBudget() < Company.companies.get(randomComp).getPrice()) {
+				if (Investor.investors.get(randomIndex).getBudget() < Company.companies.get(randomComp).getPrice()) {
 					validation = false;
 					System.out.println("Hey! You are too expensive! I am giving up. Next!\n");	
 
@@ -136,74 +144,92 @@ public class TradingDay {
 					//true: will pick just another company - allows negative values for budget //error!	
 									
 				}
-				
-				//if still keeps with companies with high price shares? how break the loop? 
-				//or from there remove the investor? or remove company?
-				//at same point, it will bug!
-
-				//if the budget is lower or equal than the min price of a share (10), then 
-				//remove from the array and add it to the copy-array 
-				if (Investor.investors.get(randomIndex).getBudget() <= minBudget) {
+				//if the budget it is too low, then remove from the list				
+				if(Investor.investors.get(randomIndex).getBudget() <= Company.companies.get(minPrice).getPrice()) {
 					validation = false;
 					System.out.println("Removing Investor: " + Investor.investors.get(randomIndex));
+					System.out.println("Budget lower than " + Company.companies.get(minPrice).getPrice());
 					investorCopytr.add(Investor.investors.get(randomIndex));
-					Investor.investors.remove(randomIndex); 
-					//once is removed, it wont be available for the reports!					
+					Investor.investors.remove(randomIndex); 	
+					//something to notice: even the minPrice will change during the trading, and it will change according to the sales
+					//if a company with the lowest price hist 10 sales, it will double up its price
+					//than the 'minPrice' will double up as well
 				}
-				//Investor.investors.remove(randomIndex); 
-				//add the investor to a new array list								
+							
 			} while (validation == false);
 
 		} catch(Exception e) {
-			System.out.println("No more investors available. End of the simulation\n");
-			//should finish and go back to menu for the reports
-			//System.exit(0);
-			Trading trading = new Trading();
-			TradingOffCommand off = new TradingOffCommand(trading);
+			System.out.println("\nNo more investors available. End of the simulation\n");
+			//finishing the trading and going back to menu
 			off.execute();
 		};
 
 		//from here make the selling process
-		//Company: subtract 1 share, add 1 share sold, add the value of the price to capital
+		//Company
+		//subtract 1 share, add 1 share sold, add the value of the price to capital
 		int shares = Company.companies.get(randomComp).getShares() - 1;
 		int sharesSold = Company.companies.get(randomComp).getSharesSold() + 1;
-		double capital = sharesSold * Company.companies.get(randomComp).getPrice();		
+		float capital = sharesSold * Company.companies.get(randomComp).getPrice();	
+		int counter = Company.companies.get(randomComp).getCounter() + 1;
 
 		//update list
-		//Company.companies.set(randomComp, shares); //error!
 		Company.companies.get(randomComp).setShares(shares);
 		Company.companies.get(randomComp).setSharesSold(sharesSold);
 		Company.companies.get(randomComp).setCapital(capital);
+		Company.companies.get(randomComp).setCounter(counter);
 
-		//Investor: subtract from budget the price of share, add 1 share bought			
+		//Investor
+		//subtract from budget the price of share, add 1 share bought			
 		int sharesBought = Investor.investors.get(randomIndex).getSharesBought() + 1;
-		double budget =  Investor.investors.get(randomIndex).getBudget() - Company.companies.get(randomComp).getPrice(); //not working
+		float budget =  Investor.investors.get(randomIndex).getBudget() - Company.companies.get(randomComp).getPrice(); 		
 
 		//to update list
 		Investor.investors.get(randomIndex).setBudget(budget);
-		Investor.investors.get(randomIndex).setSharesBought(sharesBought);				
-
-		//printing lists: testing
-		//System.out.println();
+		Investor.investors.get(randomIndex).setSharesBought(sharesBought);	
+		
+		//printing the updates
 		System.out.println("Sales done! Company and Investor updated");
 		System.out.println(Company.companies.get(randomComp));	
-		System.out.println(Investor.investors.get(randomIndex));		
+		System.out.println(Investor.investors.get(randomIndex));
+		
+		//display the update of the trade		
+		display();	
+		
+		}
+	
+	public void display() {
+		
+		//updating the stock market according to the arrays
+		int totalShares = 0;
+		float totalBudget = 0;
+		for (int i = 0; i < Company.companies.size(); i++ ) {					
+			totalShares += Company.companies.get(i).getShares();			
+		}
+
+		for (int i = 0; i < Investor.investors.size(); i++ ) {					
+			totalBudget += Investor.investors.get(i).getBudget();			
+		}
+		
+		System.out.println("********** UPDATING THE STOCK MARKET **********");
+		System.out.println("Shares available: " + totalShares);
+		System.out.println("Budget available: " + (df.format(totalBudget)));	
+		System.out.println();
 
 	}
-
-
+	
 	public void simulation() {
 
 		//this method will run the buyShare() 20000 times, till the program stop because of the required conditions //FIRST ATTEMPTS WORKED!
 		//10000 times was not enough to get no investors or no shares to sold
-		for (int i = 0;  i < 11000; i++) {			
-			buyShare();	
+		for (int i = 0;  i < 20000; i++) {			
+			buyShare();				
 		}	
 
 		//do-while ERROR: running 2 by 2???
 		//do{ buyShare(); } while (isMinBudget == false  || isMinShares == false); 
 
-		System.out.println("Simulation finished\n");	
+		System.out.println("Simulation finished\n");		
+		display();
 
 		//the method works! reports as well! BUT...
 		//investors are finishing with negative budget values

@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Main {
@@ -10,6 +11,8 @@ public class Main {
 		//Company comp = new Company();
 		//Investor inv = new Investor.InvestorBuilder().build();
 		//TradingDay day = new TradingDay();	
+		
+		
 			
 	}	
 
