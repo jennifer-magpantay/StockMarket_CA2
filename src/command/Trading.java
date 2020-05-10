@@ -1,8 +1,13 @@
+package command;
+
+import menu.Menu;
+import tradingDay.TradingDay;
+
 //request class
 public class Trading {
 	
 	TradingDay tr = new TradingDay();	
-	Menu myMenu = new Menu();	
+	Menu myMenu = Menu.getInstance();	
 	
 	public void on() {
 		System.out.println("The Trading Day Simulation has started\n");
@@ -13,7 +18,7 @@ public class Trading {
 	
 	public void off() {
 		System.out.println("The Trading Day Simulation has finished\n");
-		tr.display();
+		tr.updateTrade();
 		myMenu.start();
 		
 	}

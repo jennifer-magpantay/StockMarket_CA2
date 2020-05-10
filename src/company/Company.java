@@ -1,3 +1,4 @@
+package company;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,9 +22,10 @@ public class Company implements Comparable<Company>{
 	private float capital;
 	private int sharesSold;
 	private int counter;
+	private int counterTrade;
 
-	static ArrayList<Company> companies = new ArrayList<Company>();
-	static ArrayList<Company> companiesCopy = new ArrayList<Company>(); 
+	public static ArrayList<Company> companies = new ArrayList<Company>();
+	public static ArrayList<Company> companiesCopy = new ArrayList<Company>(); 
 
 	//formating float numbers			
 	DecimalFormat df = new DecimalFormat("#.00");	
@@ -51,6 +53,9 @@ public class Company implements Comparable<Company>{
 	public int getCounter() {
 		return counter;
 	}
+	public int getCounterTrade() {
+		return counterTrade;
+	}
 
 	//setters
 	public void setId(int id) {
@@ -75,6 +80,9 @@ public class Company implements Comparable<Company>{
 	public void setCounter(int counter) {
 		this.counter = counter;
 	}
+	public void setCounterTrade(int counterTrade) {
+		this.counterTrade = counterTrade;
+	}
 
 	//add a private constructor and implement in it the builder inner class
 	private Company(CompanyBuilder builder) {
@@ -84,6 +92,7 @@ public class Company implements Comparable<Company>{
 		this.capital = builder.capital;
 		this.sharesSold = builder.sharesSold;
 		this.counter = builder.counter;
+		this.counterTrade = builder.counterTrade;
 
 	}
 
@@ -95,19 +104,19 @@ public class Company implements Comparable<Company>{
 		private float capital;
 		private int sharesSold;	
 		private int counter;
+		private int counterTrade;
 
-		public CompanyBuilder() {			
-
-		}
+		public CompanyBuilder() { }
 
 		//add a private constructor and implement in it the builder inner class
-		public CompanyBuilder(int id, int shares, float price, int sharesSold, float capital, int counter) {
+		public CompanyBuilder(int id, int shares, float price, int sharesSold, float capital, int counter, int counterTrade) {
 			this.id = id;
 			this.shares = shares;
 			this.price = price;	
 			this.capital = capital;
 			this.sharesSold = sharesSold;	
 			this.counter = counter;
+			this.counterTrade = counterTrade;
 		}
 
 		//add the build method to return a instance of a new object of the vclass 
@@ -123,7 +132,6 @@ public class Company implements Comparable<Company>{
 		Company comp;
 		companies = new ArrayList<Company>();
 
-		//Random r   = new Random();
 		//(int)(Math.random() * (max - min) + min);		
 
 		//to build new object, consider the random values
@@ -138,15 +146,21 @@ public class Company implements Comparable<Company>{
 		//for loop to generate the random values for according to the size of the array? 
 		//or a for loop < 100? //generates 100 elements
 		for (int i = 0;  i < 100; i++) {
+			
+			//generating values for eacg variable
 			id = (int)(Math.random() * (maxId - minId) + minId);
 			shares = (int)(Math.random() * (maxSh - minSh) + minSh);
 			price = (float)(Math.random() * (maxPr - minPr) + minPr);
 			sharesSold = 0;
 			capital = 0;
 			counter = 0;
-			//totalShares = totalShares + shares.get(i);
-			comp = new Company.CompanyBuilder(id, shares, price, sharesSold, capital, counter).build(); //declaring the new object
-			companies.add(comp); //saving into the array
+			counterTrade = 0;
+			
+			//creating the new objects
+			comp = new Company.CompanyBuilder(id, shares, price, sharesSold, capital, counter, counterTrade).build(); //declaring the new object
+			
+			//saving into the array
+			companies.add(comp); 
 			//System.out.println(toString()); //printing each element created - testing output			
 		}
 		
@@ -154,20 +168,21 @@ public class Company implements Comparable<Company>{
 		return companies;
 	}
 
-	//ERROR!! ID number is not unique
-	//set double for 2 decimals? ("%.2f", double) will print 2 decimals number
-
 	public ArrayList<Company> display(){
+		
 		//display the companyes, total of shares and total price registered on the array
 		//for loop according to the size to calculate the amount of shares registered
 		int totalShares = 0;	
 		float totalPrice = 0;
 		int minPrice = 0;
 		int maxPrice = 0;
+		int totalTrade = 0;
+		int lowShareSold = 0;
 		for (int i = 0; i < companies.size(); i++ ) {					
 			totalShares += companies.get(i).getShares();
 			totalPrice += companies.get(i).getPrice();
-			
+			totalTrade += companies.get(i).getCounterTrade();
+						
 			if(companies.get(i).getPrice() < companies.get(minPrice).getPrice()) {
 				minPrice = i;
 			}
@@ -175,6 +190,19 @@ public class Company implements Comparable<Company>{
 			if(companies.get(i).getPrice() > companies.get(maxPrice).getPrice()) {
 				maxPrice = i;
 			}
+			
+			if(companies.get(i).getSharesSold() > companies.get(lowShareSold).getSharesSold()) {
+				lowShareSold = i;
+			}
+			
+			if (totalTrade == 10) {
+				
+				//set to zero to all?
+				int counterTrade = 0;
+				companies.get(i).setCounterTrade(counterTrade);
+			}
+			
+			
 		}	
 
 		System.out.println(companies);
@@ -184,8 +212,8 @@ public class Company implements Comparable<Company>{
 		System.out.println("Total of shares registered to sell: " + totalShares);	
 		System.out.println("Total value of the shares registered to sell: " + (df.format(totalPrice)));	
 		System.out.println();
-		System.out.println("Share with lowest price: " + companies.get(minPrice).getPrice());
-		System.out.println("Share with highest price: " + companies.get(maxPrice).getPrice());	
+		System.out.println("Share with lowest price: " + (df.format(companies.get(minPrice).getPrice())));
+		System.out.println("Share with highest price: " + (df.format(companies.get(maxPrice).getPrice())));	
 		System.out.println();
 		
 		return companies;
@@ -193,6 +221,7 @@ public class Company implements Comparable<Company>{
 
 	//run create arraylist first!!
 	public ArrayList<Company> sort(){
+		
 		Collections.sort(Company.companies);
 		System.out.println(Company.companies);
 		System.out.println();
@@ -211,6 +240,7 @@ public class Company implements Comparable<Company>{
 	}
 
 	public ArrayList<Company> reverse(){
+		
 		//reversing the sorted list		
 		Collections.reverse(Company.companies);
 		System.out.println(Company.companies);

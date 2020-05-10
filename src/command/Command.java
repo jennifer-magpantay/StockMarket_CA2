@@ -1,3 +1,4 @@
+package command;
 //interface command class
 public interface Command {
 	

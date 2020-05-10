@@ -1,3 +1,4 @@
+package command;
 //concrete class
 public class TradingOnCommand implements Command{
 	//declaring request class

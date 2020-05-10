@@ -1,3 +1,4 @@
+package investor;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,8 +20,8 @@ public class Investor implements Comparable<Investor>{
 	private float budget;
 	private int sharesBought;
 	
-	static ArrayList<Investor> investors = new ArrayList<Investor>();
-	static ArrayList<Investor> investorsCopy = new ArrayList<Investor>(); 
+	public static ArrayList<Investor> investors = new ArrayList<Investor>();
+	public static ArrayList<Investor> investorsCopy = new ArrayList<Investor>(); 
 	
 	//formating float numbers			
 	DecimalFormat df = new DecimalFormat("#.00");	
@@ -63,9 +64,7 @@ public class Investor implements Comparable<Investor>{
 		private int sharesBought;
 		
 
-		public InvestorBuilder() {
-
-		}
+		public InvestorBuilder() { }
 
 		//add a constructor + param
 		public InvestorBuilder(int id, float budget, int sharesBought) {
@@ -98,10 +97,16 @@ public class Investor implements Comparable<Investor>{
 		float minBud = 1000; //1000
 
 		for (int i = 0;  i < 100; i++) {
+			
+			//generating values
 			id = (int)(Math.random() * (maxId - minId) + minId);
 			budget = (float)(Math.random() * (maxBud - minBud) + minBud);
 			sharesBought = 0;
+			
+			//creating new objects
 			inv = new Investor.InvestorBuilder(id, budget, sharesBought).build(); //declaring the new object 
+			
+			//saving into the array
 			investors.add(inv); 
 			//System.out.println(toString()); //printing each element created - testing output				
 		}
@@ -111,6 +116,7 @@ public class Investor implements Comparable<Investor>{
 	}	
 	
 	public ArrayList<Investor> display(){
+		
 		//display the investors and total of budget
 		//for loop according to the size to calculate the amount of shares registered
 		int total = 0;				
@@ -129,6 +135,7 @@ public class Investor implements Comparable<Investor>{
 	}	
 
 	public ArrayList<Investor> sort(){
+		
 		Collections.sort(Investor.investors);
 		System.out.println(Investor.investors);	
 		System.out.println();
@@ -146,9 +153,8 @@ public class Investor implements Comparable<Investor>{
 		return Investor.investorsCopy;		
 	}
 
-
-
 	public ArrayList<Investor> reverse(){
+		
 		//reversing the sorted list		
 		Collections.reverse(Investor.investors);
 		System.out.println(Investor.investors);	

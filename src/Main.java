@@ -1,19 +1,12 @@
-import java.text.DecimalFormat;
-import java.util.ArrayList;
+import menu.Menu;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		Menu myMenu = new Menu();
-		myMenu.start();
+		Menu myMenu = Menu.getInstance();
+		myMenu.start();		
 		
-		//Company comp = new Company();
-		//Investor inv = new Investor.InvestorBuilder().build();
-		//TradingDay day = new TradingDay();	
-		
-		
-			
 	}	
 
 }

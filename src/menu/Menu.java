@@ -1,6 +1,10 @@
-import java.util.ArrayList;
-import java.util.Collections;
+package menu;
 import java.util.Scanner;
+
+import command.Trading;
+import command.TradingOnCommand;
+import company.Company;
+import investor.Investor;
 
 /*
  * You are required to present the user with a menu to display the result of the simulation, with the following options:
@@ -10,13 +14,17 @@ import java.util.Scanner;
  * Investor with the highest number of shares 
  * Investor with the lowest number of shares 
  * It there is more than one investor in any of the positions, they all should be displayed in the result.  
- * Desing Pattern applied: Builder, Command
+ * Desing Pattern applied: Builder, Command, Singleton
  */
 
 public class Menu {
+	
+	private static final Menu instance = new Menu();
 
-	public Menu() {
-
+	private Menu() {}
+	
+	public static Menu getInstance() {
+		return instance;
 	}
 
 	public void start() {	
@@ -27,8 +35,7 @@ public class Menu {
 
 		Company comp = new Company.CompanyBuilder().build();
 		Investor inv = new Investor.InvestorBuilder().build();
-		TradingDay tr = new TradingDay();
-		
+				
 		Trading trading = new Trading();
 		TradingOnCommand on = new TradingOnCommand(trading);
 		
@@ -46,7 +53,7 @@ public class Menu {
 				System.out.println("7. Investors with Lowest number of Shares");
 				System.out.println();
 
-				option=userInput.nextLine();
+				option = userInput.nextLine();
 				switch (option) {
 				case("1"):
 					System.out.println("------------------------------------------------------");
@@ -63,9 +70,7 @@ public class Menu {
 				case("3"):
 					System.out.println("------------------------------------------------------");
 				System.out.println("********* TRADING DAY SIMULATION *********\n");
-				//tr.buyShare();
 				on.execute();
-				//tr.simulation();		
 				break;
 
 				case("4"):
