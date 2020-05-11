@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Random;
+//research source: https://www.journaldev.com/1425/builder-design-pattern-in-java
 
 /*
  * The system must create dynamically 100 companies. All of them must have: 
@@ -11,10 +12,14 @@ import java.util.Random;
  * A random number of shares (between 500 and 1000)
  * A random share price (between 10 and 100)
  * Any other attribute that you consider relevant to the context 
+ * If a company sells 10 shares, the share price should double up - keeping double price every 10 shares sold by a company
+ * If any 10 shares are sold (from any company), and a company hasn’t sold any, the price must reduce in 2% 
+ * keeping reducing price (companies with less shares sold) every 10 shares sold (by any other company) 
  * Builder Pattern Applied
  */
 
 public class Company implements Comparable<Company>{
+	
 	//add private variables	
 	private int id; 
 	private int shares;
@@ -24,10 +29,11 @@ public class Company implements Comparable<Company>{
 	private int counter;
 	private int counterTrade;
 
+	//adding arraylist to create all companies
 	public static ArrayList<Company> companies = new ArrayList<Company>();
 	public static ArrayList<Company> companiesCopy = new ArrayList<Company>(); 
 
-	//formating float numbers			
+	//formating float numbers //df.format(variable)		
 	DecimalFormat df = new DecimalFormat("#.00");	
 
 	//getters	
@@ -105,7 +111,8 @@ public class Company implements Comparable<Company>{
 		private int sharesSold;	
 		private int counter;
 		private int counterTrade;
-
+		
+		//empty constructor
 		public CompanyBuilder() { }
 
 		//add a private constructor and implement in it the builder inner class
@@ -131,10 +138,10 @@ public class Company implements Comparable<Company>{
 
 		Company comp;
 		companies = new ArrayList<Company>();
+		
+		//to get the random values: (int)(Math.random() * (max - min) + min);		
 
-		//(int)(Math.random() * (max - min) + min);		
-
-		//to build new object, consider the random values
+		//add min and max values for the random variables
 		int minId= 1;
 		int maxId = 500;
 		int maxSh = 1000; //1000
@@ -147,7 +154,7 @@ public class Company implements Comparable<Company>{
 		//or a for loop < 100? //generates 100 elements
 		for (int i = 0;  i < 100; i++) {
 			
-			//generating values for eacg variable
+			//generating values for each variable
 			id = (int)(Math.random() * (maxId - minId) + minId);
 			shares = (int)(Math.random() * (maxSh - minSh) + minSh);
 			price = (float)(Math.random() * (maxPr - minPr) + minPr);
@@ -164,62 +171,50 @@ public class Company implements Comparable<Company>{
 			//System.out.println(toString()); //printing each element created - testing output			
 		}
 		
+		//method to calculate and display info about the companies create: total companies, total shares, total price of shares, lower and higher share price
 		display();
 		return companies;
 	}
 
 	public ArrayList<Company> display(){
 		
-		//display the companyes, total of shares and total price registered on the array
-		//for loop according to the size to calculate the amount of shares registered
-		int totalShares = 0;	
-		float totalPrice = 0;
-		int minPrice = 0;
-		int maxPrice = 0;
-		int totalTrade = 0;
-		int lowShareSold = 0;
+		int totalShares = 0;	//total shares from all companies
+		float totalPrice = 0;   //total price of all shares
+		int lowPrice = 0;       //lowest price share
+		int highPrice = 0;       //highest price share
+				
 		for (int i = 0; i < companies.size(); i++ ) {					
 			totalShares += companies.get(i).getShares();
 			totalPrice += companies.get(i).getPrice();
-			totalTrade += companies.get(i).getCounterTrade();
-						
-			if(companies.get(i).getPrice() < companies.get(minPrice).getPrice()) {
-				minPrice = i;
+			
+			//add statements get the low and high prices
+			if(companies.get(i).getPrice() < companies.get(lowPrice).getPrice()) {
+				lowPrice = i;
 			}
 
-			if(companies.get(i).getPrice() > companies.get(maxPrice).getPrice()) {
-				maxPrice = i;
-			}
-			
-			if(companies.get(i).getSharesSold() > companies.get(lowShareSold).getSharesSold()) {
-				lowShareSold = i;
-			}
-			
-			if (totalTrade == 10) {
-				
-				//set to zero to all?
-				int counterTrade = 0;
-				companies.get(i).setCounterTrade(counterTrade);
-			}
-			
-			
+			if(companies.get(i).getPrice() > companies.get(highPrice).getPrice()) {
+				highPrice = i;
+			}		
 		}	
-
+		
+		//display the arraylist with all companies
 		System.out.println(companies);
 		System.out.println();
-
-		System.out.println("Number of Companies registered: " + companies.size());//printing the size of the array - testing 
+		
+		//then, displaying the results
+		System.out.println("Number of Companies registered: " + companies.size());
 		System.out.println("Total of shares registered to sell: " + totalShares);	
 		System.out.println("Total value of the shares registered to sell: " + (df.format(totalPrice)));	
 		System.out.println();
-		System.out.println("Share with lowest price: " + (df.format(companies.get(minPrice).getPrice())));
-		System.out.println("Share with highest price: " + (df.format(companies.get(maxPrice).getPrice())));	
+		System.out.println("Lowest price share: " + (df.format(companies.get(lowPrice).getPrice())));
+		System.out.println("Highest price share: " + (df.format(companies.get(highPrice).getPrice())));	
 		System.out.println();
 		
 		return companies;
 	}	
 
 	//run create arraylist first!!
+	//for the reports, use the Comparator interface, Collections.sort() and reverse()
 	public ArrayList<Company> sort(){
 		
 		Collections.sort(Company.companies);

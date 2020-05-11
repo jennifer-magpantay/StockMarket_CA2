@@ -1,14 +1,18 @@
 package tradingDay;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import command.Trading;
 import command.TradingOffCommand;
 import company.Company;
 import investor.Investor;
+//research source: 
+//research source: 
 
-//invoker command class
+//Trading Day is the invoker class of the command pattern.
+//TradingDay is a Concrete class, which will implement the subject
 
 /*
  * This class will simulate the stock market considering few points:
@@ -23,8 +27,14 @@ import investor.Investor;
  * 
  */
 
-public class TradingDay {
 
+public class TradingDay implements Subject{
+	
+	//variables to be used on the observer pattern	
+	private List<Observer> observers;
+    private String message;
+    private boolean changes;
+		
 	//importing the arrayLists
 	public static ArrayList<Company> companytr = Company.companies; //to print (Company.companies)
 	public static ArrayList<Company> companyCopytr = Company.companiesCopy; //to print (Company.companies)
@@ -34,13 +44,17 @@ public class TradingDay {
 
 	boolean validation;
 
-	//formating float numbers			
+	//formating float numbers //df.format(variable)		
 	DecimalFormat df = new DecimalFormat("#.00");	
 
 	int randomIndex = 0; 		
-	int randomComp = 0; 	
-
-	public TradingDay() {}
+	int randomComp = 0; 
+	
+	//constructor
+	public TradingDay() {
+		
+		this.observers=new ArrayList<>();	
+	}
 
 	Random r = new Random();
 
@@ -176,16 +190,16 @@ public class TradingDay {
 
 		System.out.println("Sales done! Company and Investor updated");	
 		
-		//updating values for companies and investors
+		//updating values for companies and investors after the selling/buying process
 		updateBuyAndSell();	
 
 		//display the update of the trade		
 		updateTrade();
 
 	}
-
-	public void updateBuyAndSell() {
 		
+	public void updateBuyAndSell() {
+				
 		//from here make the selling process
 		//Company
 		//subtract 1 share, add 1 share sold, add the value of the price to capital
@@ -216,10 +230,40 @@ public class TradingDay {
 		System.out.println(Investor.investors.get(randomIndex));		
 
 	}
+	
+	public void displayNews() {
+		
+		//this method is to create the client as observer and send a message when the market is updated
+		//updating values of the market is run apart from displayNews
+		
+		//create subject
+	    TradingDay tr = new TradingDay();
+	    //create observers
+	    //for the trading, create just on client, that will be the 'viewer' of the trade transactions
+	    Observer client = new TradingNews("Client");
+	   
+	    //register observers to the subject
+	    tr.register(client);
+	   
+	    //attach observer to subject
+	    client.setSubject(tr);
+	    
+	    //check if any update is available, then, send message
+	    client.update();	    
+	    tr.postMessage("CHECK IT OUT THE LAST UPDATES OF THE STOCK MARKET");
+	}
+
 
 	public void updateTrade() {
+		
+		System.out.println("******************** STOCK MARKET UPDATES ********************");
+
+        //now send message to notify the client
+        displayNews();
+        System.out.println();
 
 		//updating the stock market according to the arrays
+        //it will return: total of shares sold, total of budget spent, shares & budget available (if any) and total trades
 		int totalShares = 0;
 		int totalSharesSold = 0;
 		float totalBudget = 0;
@@ -241,8 +285,7 @@ public class TradingDay {
 		for (int i = 0; i < Investor.investors.size(); i++ ) {					
 			totalBudget += Investor.investors.get(i).getBudget();			
 		}
-
-		System.out.println("\n********** UPDATING THE STOCK MARKET **********\n");
+	
 		System.out.println("Shares sold: " + totalSharesSold);
 		System.out.println("Budget spent: " + (df.format(totalBudgetSpent)));	
 		System.out.println();
@@ -250,10 +293,15 @@ public class TradingDay {
 		System.out.println("Budget available: " + (df.format(totalBudget)));	
 		System.out.println();
 		System.out.println("Number of trades: " + totalTrade);
-
+		System.out.println();
+		
+		//reducing price
+		//for every 10 shares sold (by any company) reduce the price of share from the company with 0 or less shares sold
+		//so, if trade == 10, then, reduce de price, set the update and set the trade to 0 again
 		if (totalTrade == 10) {				
 			System.out.println("Round of 10! Reducing price!");
-			System.out.println(Company.companies.get(lowShareSold));			
+			System.out.println(Company.companies.get(lowShareSold));
+			
 			//reducing the price for the company with less shares sold atm			
 			float price = Company.companies.get(lowShareSold).getPrice()-(Company.companies.get(lowShareSold).getPrice()*2/100); //price - (price*2/100); //-2% of the price
 			Company.companies.get(lowShareSold).setPrice(price);
@@ -265,22 +313,88 @@ public class TradingDay {
 				Company.companies.get(i).setCounterTrade(0);								
 			}			
 		}
-
-		System.out.println("------------------------------------------------------");
+		
 	}
-
+	
+	//this is the method that will run, over and over the buySghare() method
 	public void simulation() {
 
 		//this method will run the buyShare() 10000 times, till the program stop because of the required conditions //FIRST ATTEMPTS WORKED!
+		//it will stop when:
+		//all companies has no more shares (share = 0)
+		//all investors has no more budget (budget = 0) or not enough budget to buy the share with low value
 		for (int i = 0;  i < 10000; i++) {			
 			buyShare();				
 		}	
 
 		//do-while ERROR: running 2 by 2???
-		//do{ buyShare(); } while (isMinBudget == false  || isMinShares == false); 
+		//do{ buyShare(); } while (validation == false); 
 
-		System.out.println("Simulation finished\n");		
+		System.out.println("Simulation finished\n");
+		
+		//once is finished, display the updates of the trading
 		updateTrade();
 	}
+	
+	//adding implementing methods from Subject interface
+	@Override
+	public void register(Observer obj) {
 
+		//first, check if the list of observer is null		
+		if(obj == null) {			
+			throw new NullPointerException("Null Observer List");
+		}
+
+		//if not, and if the observer is not already on the list, them add
+		if(!observers.contains(obj)) {
+			observers.add(obj);
+		}	
+		
+	}
+
+	@Override
+	public void unregister(Observer obj) {
+		
+		//in case need to remove observer from the list		
+				observers.remove(obj);
+	}
+
+	@Override
+	public void notifyObservers() {
+
+		List<Observer> observersLocal = null;
+		
+		//if there is no changes, than, stop the application                
+        if (!changes) {
+            return;
+        }
+        
+        //otherwise, add to the list and call the update          
+        observersLocal = new ArrayList<>(this.observers);
+          
+        this.changes = false;
+        
+        for (Observer obj : observersLocal) {                 
+        	obj.update();            
+        }
+		
+	}
+
+	@Override
+	public Object getUpdate(Observer obj) {
+
+		//once there are updates, then, print the message		
+		return this.message;
+	}
+	
+	//method to post message to notify the updates
+		public void postMessage(String msg) {		
+			System.out.println("Message Posted to Trading Day: " + msg);        
+			
+			this.message = msg;        
+			this.changes = true;
+			
+			//if the boolean is true, then call the method to notify clients/observers from the list
+			notifyObservers();
+		}
 }

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+//research source: https://www.journaldev.com/1425/builder-design-pattern-in-java
 /*
  * The system must create dynamically 100 investors. All of them must have: 
  * A unique ID 
@@ -20,10 +21,11 @@ public class Investor implements Comparable<Investor>{
 	private float budget;
 	private int sharesBought;
 	
+	//adding arraylist to create/save all investors	
 	public static ArrayList<Investor> investors = new ArrayList<Investor>();
 	public static ArrayList<Investor> investorsCopy = new ArrayList<Investor>(); 
 	
-	//formating float numbers			
+	//formating float numbers	//df.format(variable)		
 	DecimalFormat df = new DecimalFormat("#.00");	
 
 	//getters
@@ -111,13 +113,13 @@ public class Investor implements Comparable<Investor>{
 			//System.out.println(toString()); //printing each element created - testing output				
 		}
 		
+		//display the investors and total of budget
 		display();	
 		return investors;
 	}	
 	
-	public ArrayList<Investor> display(){
+	public ArrayList<Investor> display(){		
 		
-		//display the investors and total of budget
 		//for loop according to the size to calculate the amount of shares registered
 		int total = 0;				
 		for (int i = 0; i < investors.size(); i++ ) {					
